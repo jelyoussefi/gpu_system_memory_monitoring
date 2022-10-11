@@ -29,7 +29,7 @@ services:
     build: 
        context: ./utils/
        args:
-          BASE_IMAGE : ge/intel/sles_dpcpp_compiler
+          BASE_IMAGE : intel/oneapi-basekit 
     image: memory_monitoring_image     
     ports:
        - 8082:8082 

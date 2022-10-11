@@ -29,7 +29,7 @@ prometheus-cpp:
 	@cd /tmp && rm -rf prometheus-cpp && git clone https://github.com/jupp0r/prometheus-cpp && \
 		cd prometheus-cpp && git submodule init && git submodule update && \
 		mkdir build && cd build && CXX=g++ \
-		cmake .. -DBUILD_SHARED_LIBS=ON -DENABLE_PUSH=OFF -DENABLE_COMPRESSION=OFF .. && \
+		cmake -DBUILD_SHARED_LIBS=ON -DENABLE_PUSH=OFF  -DENABLE_TESTING=OFF  -DENABLE_COMPRESSION=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
 		make && sudo make install
 
 memMonitor: 
@@ -39,12 +39,6 @@ memMonitor:
 
 build: prometheus-cpp memMonitor
 
-#----------------------------------------------------------------------------------------------------------------------
-# Docker
-#----------------------------------------------------------------------------------------------------------------------
-docker-build:
-	@$(call msg, Building the docker image  ${DOCKER_IMAGE_NAME} ...)
-	@docker build  --build-arg BASE_IMAGE=${DOCKER_BASE_IMAGE}  -t ${DOCKER_IMAGE_NAME} . --force-rm
 	
 #----------------------------------------------------------------------------------------------------------------------
 # helper functions
