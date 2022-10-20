@@ -13,6 +13,7 @@
 #include <math.h>
 #include <ctime>
 #include <regex>
+#include <limits>
 
 #include <prometheus/counter.h>
 #include <prometheus/exposer.h>
@@ -50,6 +51,7 @@ float getGpuMemoryAllocatedSize() {
 	return allocatedMemSize/GB;
 }
 
+/*
 float getSystemMemoryAllocatedSize() {
 	struct sysinfo memInfo;
 
@@ -59,7 +61,36 @@ float getSystemMemoryAllocatedSize() {
 
 	return memUsed /= GB;
 }
+*/
 
+float getSystemMemoryAllocatedSize() {
+    unsigned int memTotal, memFree, memAvailable, buffers, cached;
+
+    std::ifstream file("/proc/meminfo");
+
+    file.ignore(18, ' '); 
+    file >> memTotal;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    file.ignore(18, ' '); 
+    file >> memFree;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    file.ignore(18, ' '); 
+    file >> memAvailable;    
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    file.ignore(18, ' '); 
+    file >> buffers;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    file.ignore(18, ' '); 
+    file >> cached;
+
+    file.close();
+
+    return (float)((memTotal - memAvailable) * KB) / GB;
+}
 
 int main() {
 	
